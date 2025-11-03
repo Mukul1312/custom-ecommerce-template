@@ -2,8 +2,8 @@ import { Navigate, Outlet } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { Skeleton } from "./ui/skeleton";
 
-export default function ProtectedRoute() {
-  const { user, loading } = useAuth();
+export default function AdminRoute() {
+  const { user, profile, loading } = useAuth();
 
   if (loading) {
     return (
@@ -18,6 +18,10 @@ export default function ProtectedRoute() {
 
   if (!user) {
     return <Navigate to="/login" replace />;
+  }
+  
+  if (profile?.role !== "admin") {
+    return <Navigate to="/" replace />;
   }
 
   return <Outlet />;

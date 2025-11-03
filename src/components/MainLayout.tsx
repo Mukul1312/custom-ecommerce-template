@@ -20,30 +20,39 @@ import {
   Moon,
 } from 'lucide-react';
 import { useCart } from '../contexts/CartContext';
+import Footer from './Footer';
+import { Skeleton } from './ui/skeleton';
 
 export default function MainLayout() {
-  const { user, signOut, loading } = useAuth();
+  const { user, profile, signOut, loading } = useAuth();
   const { theme, setTheme } = useTheme();
   const { cart } = useCart();
 
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+        <div className="flex items-center justify-center h-screen">
+            <div className="space-y-2">
+                <Skeleton className="h-4 w-[250px]" />
+                <Skeleton className="h-4 w-[200px]" />
+            </div>
+        </div>
+    );
   }
 
   return (
     <div className="flex min-h-screen w-full flex-col">
-      <header className="sticky top-0 flex h-16 items-center gap-4 border-b bg-background px-4 md:px-6">
+      <header className="sticky top-0 z-10 flex h-16 items-center gap-4 border-b bg-background px-4 md:px-6">
         <nav className="hidden flex-col gap-6 text-lg font-medium md:flex md:flex-row md:items-center md:gap-5 md:text-sm lg:gap-6">
           <Link to="/" className="flex items-center gap-2 text-lg font-semibold md:text-base">
             <Package2 className="h-6 w-6" />
             <span className="sr-only">E-commerce</span>
           </Link>
-          <NavLink to="/" className="text-muted-foreground transition-colors hover:text-foreground">
+          <NavLink to="/" className={({ isActive }) => `transition-colors hover:text-foreground ${isActive ? 'text-foreground' : 'text-muted-foreground'}`}>
             Home
           </NavLink>
           <NavLink
             to="/products"
-            className="text-muted-foreground transition-colors hover:text-foreground"
+            className={({ isActive }) => `transition-colors hover:text-foreground ${isActive ? 'text-foreground' : 'text-muted-foreground'}`}
           >
             Products
           </NavLink>
@@ -61,10 +70,10 @@ export default function MainLayout() {
                 <Package2 className="h-6 w-6" />
                 <span className="sr-only">E-commerce</span>
               </Link>
-              <NavLink to="/" className="hover:text-foreground">
+              <NavLink to="/" className={({ isActive }) => `transition-colors hover:text-foreground ${isActive ? 'text-foreground' : 'text-muted-foreground'}`}>
                 Home
               </NavLink>
-              <NavLink to="/products" className="text-muted-foreground hover:text-foreground">
+              <NavLink to="/products" className={({ isActive }) => `transition-colors hover:text-foreground ${isActive ? 'text-foreground' : 'text-muted-foreground'}`}>
                 Products
               </NavLink>
             </nav>
@@ -88,7 +97,7 @@ export default function MainLayout() {
               <span className="sr-only">Cart</span>
             </Button>
             {cart.length > 0 && (
-              <span className="absolute top-0 right-0 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-xs text-primary-foreground">
+              <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-xs text-primary-foreground">
                 {cart.length}
               </span>
             )}
@@ -107,6 +116,12 @@ export default function MainLayout() {
                 <DropdownMenuItem asChild>
                   <Link to="/profile">Profile</Link>
                 </DropdownMenuItem>
+                {profile?.role === 'admin' && (
+                    <DropdownMenuItem asChild>
+                        <Link to="/admin">Admin Dashboard</Link>
+                    </DropdownMenuItem>
+                )}
+                <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={signOut}>Logout</DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -117,9 +132,10 @@ export default function MainLayout() {
           )}
         </div>
       </header>
-      <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
+      <main className="flex-1">
         <Outlet />
       </main>
+      <Footer />
     </div>
   );
 }
