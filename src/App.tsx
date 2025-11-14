@@ -16,8 +16,23 @@ import AdminProducts from "./pages/admin/AdminProducts";
 import AdminOrders from "./pages/admin/AdminOrders";
 import AdminOrderDetail from "./pages/admin/AdminOrderDetail";
 import MainLayout from "./components/MainLayout";
+import { EnvWarning } from "./components/global/EnvWarning";
+
+const isSupabaseConfigured =
+  import.meta.env.VITE_SUPABASE_URL &&
+  import.meta.env.VITE_SUPABASE_ANON_KEY &&
+  import.meta.env.VITE_SUPABASE_URL !== 'YOUR_SUPABASE_URL' &&
+  import.meta.env.VITE_SUPABASE_ANON_KEY !== 'YOUR_SUPABASE_ANON_KEY'
 
 function App() {
+  if (!isSupabaseConfigured) {
+    return (
+      <div className="flex h-screen items-center justify-center bg-background p-4">
+        <EnvWarning />
+      </div>
+    )
+  }
+
   return (
     <Router>
       <Toaster />
