@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { supabase } from '@/lib/supabase';
+import { getSupabaseClient } from '@/lib/supabase';
 import type { Product } from '@/contexts/CartContext';
 import { Input } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -14,6 +14,8 @@ export default function Products() {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
+        const supabase = getSupabaseClient();
+        if (!supabase) return;
         let query = supabase.from('products').select('*');
         if (searchTerm) {
           query = query.ilike('name', `%${searchTerm}%`);

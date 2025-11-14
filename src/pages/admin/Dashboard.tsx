@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { supabase } from '@/lib/supabase';
+import { getSupabaseClient } from '@/lib/supabase';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { DollarSign, Users, ShoppingCart } from 'lucide-react';
 
@@ -15,6 +15,8 @@ export default function Dashboard() {
   useEffect(() => {
     const fetchStats = async () => {
       try {
+        const supabase = getSupabaseClient();
+        if (!supabase) return;
         const { data: totalSales, error: salesError } = await supabase.rpc('get_total_sales');
         if (salesError) throw salesError;
 

@@ -1,17 +1,18 @@
-import { createClient } from '@supabase/supabase-js'
+import { createClient, SupabaseClient } from '@supabase/supabase-js'
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-console.log("Initializing Supabase client...");
-console.log("Supabase URL from env:", supabaseUrl);
-console.log("Supabase Anon Key from env:", supabaseAnonKey ? "Loaded" : "Not Loaded");
+let supabase: SupabaseClient | null = null;
 
-if (!supabaseUrl || !supabaseAnonKey) {
-  throw new Error("Supabase URL and Anon Key must be defined in .env file");
-}
-
-// Create a single supabase client for interacting with your database
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
-
-console.log("Supabase client created.");
+export const getSupabaseClient = () => {
+  if (!supabase) {
+    if (!supabaseUrl || !supabaseAnonKey) {
+      // This should not happen if the check in App.tsx is working
+      console.error("Supabase URL and Anon Key must be defined to initialize the client.");
+      return null;
+    }
+    supabase = createClient(supabaseUrl, supabaseAnonKey);
+  }
+  return supabase;
+};

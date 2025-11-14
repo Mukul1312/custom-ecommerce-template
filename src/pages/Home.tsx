@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { supabase } from "@/lib/supabase";
+import { getSupabaseClient } from "@/lib/supabase";
 import type { Product } from "@/contexts/CartContext";
 import { Skeleton } from "@/components/ui/skeleton";
 import ProductCard from "@/components/ProductCard";
@@ -13,6 +13,8 @@ export default function Home() {
     const fetchProducts = async () => {
       console.log("Fetching products...");
       try {
+        const supabase = getSupabaseClient();
+        if (!supabase) return;
         const { data, error } = await supabase.from("products").select("*").limit(8);
         if (error) {
           throw error;

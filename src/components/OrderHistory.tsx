@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { supabase } from '@/lib/supabase';
+import { getSupabaseClient } from '@/lib/supabase';
 import { useAuth } from '@/contexts/AuthContext';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -26,6 +26,8 @@ export default function OrderHistory() {
       }
 
       try {
+        const supabase = getSupabaseClient();
+        if (!supabase) return;
         const { data, error } = await supabase
           .from('orders')
           .select('*')

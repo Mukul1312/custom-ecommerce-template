@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react';
-import { supabase } from '@/lib/supabase';
+import { getSupabaseClient } from '@/lib/supabase';
 
 // Define the types for the product and cart item
 export interface Product {
@@ -70,6 +70,8 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
   const cartTotal = cart.reduce((total, item) => total + item.price * item.quantity, 0);
 
   const handleCheckout = async () => {
+    const supabase = getSupabaseClient();
+    if (!supabase) return;
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) {
       throw new Error("User must be logged in to checkout.");

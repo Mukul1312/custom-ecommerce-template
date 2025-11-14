@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react';
+ import { useState, useEffect } from 'react';
 import { useCart } from '@/contexts/CartContext';
 import { useAuth } from '@/contexts/AuthContext';
-import { supabase } from '@/lib/supabase';
+import { getSupabaseClient } from '@/lib/supabase';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -44,6 +44,8 @@ export default function Checkout() {
     const fetchAddresses = async () => {
       if (!user) return;
       try {
+        const supabase = getSupabaseClient();
+        if (!supabase) return;
         const { data, error } = await supabase
           .from('shipping_addresses')
           .select('*')
@@ -74,6 +76,8 @@ export default function Checkout() {
       return;
     }
     setLoading(true);
+    const supabase = getSupabaseClient();
+    if (!supabase) return;
     try {
       // Create an order
       let addressIdToSave = selectedAddress;

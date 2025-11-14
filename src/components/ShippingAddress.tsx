@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { supabase } from '@/lib/supabase';
+import { getSupabaseClient } from '@/lib/supabase';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -43,6 +43,8 @@ export default function ShippingAddressManager() {
       }
 
       try {
+        const supabase = getSupabaseClient();
+        if (!supabase) return;
         const { data, error } = await supabase
           .from('shipping_addresses')
           .select('*')
@@ -74,6 +76,8 @@ export default function ShippingAddressManager() {
     if (!user) return;
 
     try {
+      const supabase = getSupabaseClient();
+      if (!supabase) return;
       const { data, error } = await supabase
         .from('shipping_addresses')
         .insert([{ ...newAddress, profile_id: user.id }])

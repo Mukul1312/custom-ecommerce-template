@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { supabase } from '@/lib/supabase';
+import { getSupabaseClient } from '@/lib/supabase';
 import type { Product } from '@/contexts/CartContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
@@ -43,6 +43,8 @@ export default function AdminProducts() {
 
   const fetchProducts = async () => {
     try {
+      const supabase = getSupabaseClient();
+      if (!supabase) return;
       const { data, error } = await supabase.from('products').select('*');
       if (error) throw error;
       setProducts(data || []);
@@ -59,6 +61,8 @@ export default function AdminProducts() {
 
   const handleDelete = async (productId: string) => {
     try {
+      const supabase = getSupabaseClient();
+      if (!supabase) return;
       const { error } = await supabase.from('products').delete().eq('id', productId);
       if (error) throw error;
       toast.success('Product deleted successfully');
@@ -74,6 +78,8 @@ export default function AdminProducts() {
     const productData = Object.fromEntries(formData.entries());
 
     try {
+      const supabase = getSupabaseClient();
+      if (!supabase) return;
       let error;
       if (selectedProduct) {
         // Update

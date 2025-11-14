@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { supabase } from "@/lib/supabase";
+import { getSupabaseClient } from "@/lib/supabase";
 import type { Session, User } from "@supabase/supabase-js";
 
 type Profile = {
@@ -25,6 +25,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     setLoading(true);
+    const supabase = getSupabaseClient();
+    if (!supabase) {
+      setLoading(false);
+      return;
+    }
 
     // Fetch initial session
     supabase.auth
@@ -78,6 +83,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   const signOut = async () => {
+    const supabase = getSupabaseClient();
+    if (!supabase) return;
     await supabase.auth.signOut();
   };
 

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { supabase } from '@/lib/supabase';
+import { getSupabaseClient } from '@/lib/supabase';
 import type { Product } from '@/contexts/CartContext';
 import { Button } from '@/components/ui/button';
 import { useCart } from '@/contexts/CartContext';
@@ -16,6 +16,8 @@ export default function ProductDetail() {
     const fetchProduct = async () => {
       if (!id) return;
       try {
+        const supabase = getSupabaseClient();
+        if (!supabase) return;
         const { data, error } = await supabase
           .from('products')
           .select('*')

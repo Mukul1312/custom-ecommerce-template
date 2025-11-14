@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { supabase } from '@/lib/supabase';
+import { getSupabaseClient } from '@/lib/supabase';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   Table,
@@ -34,6 +34,8 @@ export default function AdminOrders() {
 
   const fetchOrders = async () => {
     try {
+      const supabase = getSupabaseClient();
+      if (!supabase) return;
       const { data, error } = await supabase
         .from('orders_with_profile')
         .select('*');
@@ -57,6 +59,8 @@ export default function AdminOrders() {
 
   const handleStatusChange = async (orderId: string, status: string) => {
     try {
+      const supabase = getSupabaseClient();
+      if (!supabase) return;
       const { error } = await supabase
         .from('orders')
         .update({ status })

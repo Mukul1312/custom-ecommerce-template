@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { supabase } from "@/lib/supabase";
+import { getSupabaseClient } from "@/lib/supabase";
 
 export default function Signup() {
   const navigate = useNavigate();
@@ -19,6 +19,8 @@ export default function Signup() {
     setError(null);
     setLoading(true);
     try {
+      const supabase = getSupabaseClient();
+      if (!supabase) return;
       const { data, error } = await supabase.auth.signUp({
         email,
         password,

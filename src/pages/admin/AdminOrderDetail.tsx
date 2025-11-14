@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { supabase } from '@/lib/supabase';
+import { getSupabaseClient } from '@/lib/supabase';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 
@@ -21,11 +21,9 @@ interface OrderDetails {
 
 interface OrderItem {
   quantity: number;
-  products: {
-    name: string;
-    price: number;
-    image_url: string;
-  };
+  name: string;
+  price: number;
+  image_url: string;
 }
 
 export default function AdminOrderDetail() {
@@ -39,6 +37,8 @@ export default function AdminOrderDetail() {
     const fetchOrderDetails = async () => {
       if (!id) return;
       try {
+        const supabase = getSupabaseClient();
+        if (!supabase) return;
         const { data, error } = await supabase
           .from('orders')
           .select('*, shipping_addresses(*)')
@@ -54,9 +54,11 @@ export default function AdminOrderDetail() {
     const fetchOrderItems = async () => {
       if (!id) return;
       try {
+        const supabase = getSupabaseClient();
+        if (!supabase) return;
         const { data, error } = await supabase
           .from('order_items')
-          .select('quantity, products!inner(*)')
+          .select('quantity, ...products!inner(name, price, image_url)')
           .eq('order_id', id);
         if (error) throw error;
         setOrderItems(data || []);
@@ -146,16 +148,16 @@ export default function AdminOrderDetail() {
                   <TableCell>
                     <div className="flex items-center gap-4">
                       <img
-                        src={item.products?.image_url}
-                        alt={item.products?.name}
+                        src={item.image_url}
+                        alt={item.name}
                         className="w-16 h-16 object-cover rounded-md"
                       />
-                      <span>{item.products?.name}</span>
+                      <span>{item.name}</span>
                     </div>
                   </TableCell>
                   <TableCell>{item.quantity}</TableCell>
-                  <TableCell>${item.products?.price.toFixed(2)}</TableCell>
-                  <TableCell>${(item.products?.price! * item.quantity).toFixed(2)}</TableCell>
+                  <TableCell>${item.price.toFixed(2)}</TableCell>
+                  <TableCell>${(item.price * item.quantity).toFixed(2)}</TableCell>
                 </TableRow>
               ))}
             </TableBody>
