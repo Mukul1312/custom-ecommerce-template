@@ -24,4 +24,4 @@ dist-ssr
 *.sw?
 .roo
 
-.env
+.env.local
